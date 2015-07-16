@@ -1,0 +1,13 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "d:\\Wes\\python\\cloudCache\\cloudCache"
+		}
+	],
+    "SublimeLinter":
+    {
+        "@python": 3
+    }
+}
