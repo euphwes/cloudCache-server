@@ -3,33 +3,38 @@
 import tornado.web
 import tornado.ioloop
 
+from tornroutes import route
+
 # -------------------------------------------------------------------------------------------------
 
 SERVER_PORT = 8888
 
 # -------------------------------------------------------------------------------------------------
 
-class CacheItemHandler(tornado.web.RequestHandler):
-    """ The main API handler for creating, updating, and retrieving cloudCache entries. """
+@route('/cache/item/(.+)')
+class GetCacheItemHandler(tornado.web.RequestHandler):
+    """ The main API handler for updating and retrieving cloudCache entries. """
 
-    def get(self, key, value):
-        print("{}: {}".format(key, value))
+    def get(self, key):
+        raise tornado.web.HTTPError(404)
+
+
+    def put(self, key):
+        raise tornado.web.HTTPError(404)
 
 # -------------------------------------------------------------------------------------------------
 
 def main():
     """ Runs the server. """
 
-    routes = [(r"/cache/(.+)/(.+)", CacheItemHandler)]
-
-    application = tornado.web.Application(routes)
+    application = tornado.web.Application(route.get_routes())
     application.listen(SERVER_PORT)
 
     tornado.ioloop.IOLoop.instance().start()
 
-# -------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
     main()
 
-# curl -I -X GET http://localhost:8888/cache/name/wes
+
+# curl -I -X GET http://localhost:8888/cache/item/wes
