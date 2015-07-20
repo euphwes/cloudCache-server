@@ -9,6 +9,7 @@ from sqlalchemy_utils.types import ArrowType
 
 from . import SQL_ALCHEMY_BASE, DB_SESSION as db
 from . import User
+from ..Errors import NotebookAlreadyExistsError
 
 from arrow import now as arrow_now
 
@@ -41,8 +42,9 @@ def create_notebook(name, user):
     """
 
     if db.query(Notebook).filter_by(name=name, user=user).first():
-        # TODO: throw exception for notebook already existing for this user
-        return
+        message = "A notebook with the name '{}' already exists for the user '{}'"
+        message = message.format(name, user.username)
+        raise NotebookAlreadyExistsError(message)
 
     new_notebook = Notebook(user=user, name=name)
 
