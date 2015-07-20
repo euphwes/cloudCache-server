@@ -25,3 +25,28 @@ class Notebook(SQL_ALCHEMY_BASE):
     created_on = Column(ArrowType, default=arrow_now)
 
     user = relationship(User, backref=backref('notebooks'))
+
+# -------------------------------------------------------------------------------------------------
+
+def create_notebook(name, user):
+    """ Creates a Notebook entry in the database, and returns the Notebook object to the caller.
+
+    Args:
+        name (string): The new notebook's name.
+        user (cloudCache.Business.Models.Notebook): The new notebook's user.
+
+    Returns:
+        cloudCache.Business.Models.Notebook: The newly-created Notebook.
+
+    """
+
+    if db.query(Notebook).filter_by(name=name, user=user).first():
+        # TODO: throw exception for notebook already existing for this user
+        return
+
+    new_notebook = Notebook(user=user, name=name)
+
+    db.add(new_notebook)
+    db.commit()
+
+    return new_notebook
