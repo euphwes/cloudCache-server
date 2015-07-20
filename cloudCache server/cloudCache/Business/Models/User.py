@@ -7,6 +7,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy_utils.types import ArrowType
 
 from . import SQL_ALCHEMY_BASE, DB_SESSION as db
+from ..Errors import UserAlreadyExistsError
 
 from arrow import now as arrow_now
 from uuid import uuid4 as guid
@@ -38,14 +39,16 @@ def create_user(username, first_name, last_name, email_address):
         email_address (string): The new user's email address.
 
     Returns:
-        The newly-created User.
+        cloudCache.Business.Models.User: The newly-created User.
+
+    Raises:
+        cloudCache.Business.Errors.UserAlreadyExistsError: If `username` is already taken.
 
     """
 
-    user = db.query(User).filter_by(username=username).first()
-    if user is not None:
-        # TODO: raise appropriate exception
-        return user
+    if db.query(User).filter_by(username=username).first():
+        message = 'The username {} is already taken by another user'.format(username)
+        raise UserAlreadyExistsError(message)
 
     api_key = str(guid()).upper().replace('-', '')
 
