@@ -11,5 +11,6 @@ DB_SESSION = Session(bind=DB_ENGINE)
 SQL_ALCHEMY_BASE = declarative_base()
 
 from .User import User
+from .Notebook import Notebook
 
 SQL_ALCHEMY_BASE.metadata.create_all(DB_ENGINE)
