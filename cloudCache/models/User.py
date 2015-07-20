@@ -29,8 +29,18 @@ class User(SQL_ALCHEMY_BASE):
 # -------------------------------------------------------------------------------------------------
 
 def create_user(username, first_name, last_name, email_address):
-    """ Creates a User entry in the database, and returns the user object to the caller. """
-    # TODO: Proper docstring with params, returns, throws, etc.
+    """ Creates a User entry in the database, and returns the user object to the caller.
+
+    Args:
+        username (string): The new user's username.
+        first_name (string): The new user's first name.
+        last_name (string): The new user's last name.
+        email_address (string): The new user's email address.
+
+    Returns:
+        The newly-created User.
+
+    """
 
     user = db.query(User).filter_by(username=username).first()
     if user is not None:
