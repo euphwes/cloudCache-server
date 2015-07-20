@@ -10,5 +10,9 @@ class CloudCacheError(Exception):
 
 # -------------------------------------------------------------------------------------------------
 
-from .UserErrors import UserAlreadyExistsError
-from .NotebookErrors import NotebookAlreadyExistsError
+class UserAlreadyExistsError(CloudCacheError):
+    """ A custom error which is thrown when a given username is already taken. """
+
+class NotebookAlreadyExistsError(CloudCacheError):
+    """ A custom error which is thrown when attempting to create a Notebook for a specific user,
+    and a Notebook with that name already exists for that user. """
