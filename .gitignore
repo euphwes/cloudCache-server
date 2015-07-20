@@ -1,3 +1,6 @@
+# sqlite databases
+*.db
+
 # Sublime Text stuff
 *.sublime-workspace
 

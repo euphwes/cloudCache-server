@@ -22,7 +22,7 @@ class Notebook(SQL_ALCHEMY_BASE):
 
     id         = Column(Integer, primary_key=True)
     user_id    = Column(Integer, ForeignKey('USER.id'))
-    name       = Column(String)
+    name       = Column(String(255))
     created_on = Column(ArrowType, default=arrow_now)
 
     user = relationship(User, backref=backref('notebooks'))

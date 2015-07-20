@@ -4,9 +4,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-# TODO: This should actually point to real database
-# TODO: Actually, check first if it exists? If not, create first?
-DB_ENGINE = create_engine('sqlite://')
+CONN_STRING = 'mysql+pymysql://{user}:{password}@{host}:{port}/cloudCache'
+CONN_STRING = CONN_STRING.format(user='root',
+                                 password='password',
+                                 host='localhost',
+                                 port='3306')
+
+DB_ENGINE = create_engine(CONN_STRING)
 DB_SESSION = Session(bind=DB_ENGINE)
 SQL_ALCHEMY_BASE = declarative_base()
 

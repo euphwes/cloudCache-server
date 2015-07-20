@@ -20,11 +20,11 @@ class User(SQL_ALCHEMY_BASE):
     __tablename__ = 'USER'
 
     id            = Column(Integer, primary_key=True)
-    username      = Column(String, unique=True)
-    first_name    = Column(String)
-    last_name     = Column(String)
-    email_address = Column(String)
-    api_key       = Column(String)
+    username      = Column(String(255), unique=True)
+    first_name    = Column(String(255))
+    last_name     = Column(String(255))
+    email_address = Column(String(255))
+    api_key       = Column(String(32))
     date_joined   = Column(ArrowType, default=arrow_now)
 
 # -------------------------------------------------------------------------------------------------
