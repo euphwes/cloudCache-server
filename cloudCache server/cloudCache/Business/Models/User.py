@@ -8,8 +8,8 @@ from sqlalchemy_utils.types import ArrowType
 
 from . import SQL_ALCHEMY_BASE, DB_SESSION as db
 
-import arrow
-import uuid
+from arrow import now as arrow_now
+from uuid import uuid4 as guid
 
 # -------------------------------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ class User(SQL_ALCHEMY_BASE):
     last_name     = Column(String)
     email_address = Column(String)
     api_key       = Column(String)
-    date_joined   = Column(ArrowType, default=arrow.now)
+    date_joined   = Column(ArrowType, default=arrow_now)
 
 # -------------------------------------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ def create_user(username, first_name, last_name, email_address):
         # TODO: raise appropriate exception
         return user
 
-    api_key = str(uuid.uuid4()).upper().replace('-', '')
+    api_key = str(guid()).upper().replace('-', '')
 
     new_user = User(username=username,
                     first_name=first_name,
