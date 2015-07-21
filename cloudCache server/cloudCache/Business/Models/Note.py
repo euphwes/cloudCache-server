@@ -13,8 +13,8 @@ from ..Errors import NoteAlreadyExistsError
 
 from arrow import now as arrow_now
 from arrow.arrow import Arrow
-
 from json import dumps
+from collections import OrderedDict
 
 # -------------------------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ class Note(SQL_ALCHEMY_BASE):
     def to_json(self, compact=True):
         """ Returns a JSON representation of this Note. """
 
-        json = dict()
+        json = OrderedDict()
         attrs = ['id', 'notebook_id', 'key', 'value', 'created_on', 'last_updated']
 
         for attribute in attrs:

@@ -13,8 +13,8 @@ from ..Errors import NotebookAlreadyExistsError
 
 from arrow import now as arrow_now
 from arrow.arrow import Arrow
-
 from json import dumps, loads
+from collections import OrderedDict
 
 # -------------------------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ class Notebook(SQL_ALCHEMY_BASE):
     def to_json(self, compact=True):
         """ Returns a JSON representation of this Notebook. """
 
-        json = dict()
+        json = OrderedDict()
         attrs = ['id', 'user_id', 'name', 'created_on']
 
         for attribute in attrs:
@@ -54,7 +54,8 @@ class Notebook(SQL_ALCHEMY_BASE):
 
         # pylint: disable=E1101
         # Notebook DOES have attribute "notes", it's created as a backref in Note model
-        json['notes'] = [loads(note.to_json()) for note in self.notes]
+        json['notes'] = [loads(note.to_json(), object_pairs_hook=OrderedDict)\
+            for note in self.notes]
 
         if compact:
             return dumps(json, separators=(',',':'))

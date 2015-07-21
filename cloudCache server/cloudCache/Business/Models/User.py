@@ -11,10 +11,9 @@ from ..Errors import UserAlreadyExistsError
 
 from arrow import now as arrow_now
 from arrow.arrow import Arrow
-
 from json import dumps, loads
-
 from uuid import uuid4 as guid
+from collections import OrderedDict
 
 # -------------------------------------------------------------------------------------------------
 
@@ -43,7 +42,7 @@ class User(SQL_ALCHEMY_BASE):
     def to_json(self, compact=True):
         """ Returns a JSON representation of this User. """
 
-        json = dict()
+        json = OrderedDict()
         attrs = ['id', 'username', 'first_name', 'last_name', 'email_address', 'api_key', 'date_joined']
 
         for attribute in attrs:
@@ -54,7 +53,8 @@ class User(SQL_ALCHEMY_BASE):
 
         # pylint: disable=E1101
         # User DOES have attribute "notebooks", it's created as a backref in Notebook model
-        json['notebooks'] = [loads(notebook.to_json()) for notebook in self.notebooks]
+        json['notebooks'] = [loads(notebook.to_json(), object_pairs_hook=OrderedDict)\
+            for notebook in self.notebooks]
 
         if compact:
             return dumps(json, separators=(',',':'))
