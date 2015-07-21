@@ -13,8 +13,6 @@ from ..Errors import UserAlreadyExistsError
 
 from arrow import now as arrow_now
 from uuid import uuid4 as guid
-from json import loads
-from collections import OrderedDict
 
 # -------------------------------------------------------------------------------------------------
 
@@ -40,15 +38,26 @@ class User(JsonMixin, SQL_ALCHEMY_BASE):
         return self.username
 
 
-    def to_json(self, compact=True):
-        """ Returns a JSON representation of this User. """
-
-        nb_list = [loads(nb.to_json(), object_pairs_hook=OrderedDict) for nb in self.notebooks]
+    def to_ordered_dict(self):
+        """ Returns an OrderedDict representation of this User. """
 
         attrs = ['username', 'id', 'first_name', 'last_name']
         attrs.extend(['email_address', 'api_key', 'date_joined'])
 
-        return self._to_json(attrs, compact=compact, additional_kvp={'notebooks': nb_list})
+        kvp = {'notebooks': [notebook.to_ordered_dict() for notebook in self.notebooks]}
+
+        return self._to_ordered_dict(attrs, additional_kvp=kvp)
+
+
+    def to_json(self, compact=True):
+        """ Returns a JSON representation of this User. """
+
+        attrs = ['username', 'id', 'first_name', 'last_name']
+        attrs.extend(['email_address', 'api_key', 'date_joined'])
+
+        kvp = {'notebooks': [notebook.to_ordered_dict() for notebook in self.notebooks]}
+
+        return self._to_json(attrs, compact=compact, additional_kvp=kvp)
 
 # -------------------------------------------------------------------------------------------------
 

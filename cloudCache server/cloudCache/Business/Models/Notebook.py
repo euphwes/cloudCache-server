@@ -14,8 +14,6 @@ from . import User
 from ..Errors import NotebookAlreadyExistsError
 
 from arrow import now as arrow_now
-from json import loads
-from collections import OrderedDict
 
 # -------------------------------------------------------------------------------------------------
 
@@ -41,13 +39,20 @@ class Notebook(JsonMixin, SQL_ALCHEMY_BASE):
         return self_str.format(username=self.user.username, name=self.name)
 
 
+    def to_ordered_dict(self):
+        """ Returns an OrderedDict representation of this Notebook. """
+
+        attrs = ['name', 'id', 'user_id', 'created_on']
+        kvp = {'notes': [note.to_ordered_dict() for note in self.notes]}
+        return self._to_ordered_dict(attrs, additional_kvp=kvp)
+
+
     def to_json(self, compact=True):
         """ Returns a JSON representation of this Notebook. """
 
-        notes_list = [loads(n.to_json(), object_pairs_hook=OrderedDict) for n in self.notes]
-
         attrs = ['name', 'id', 'user_id', 'created_on']
-        return self._to_json(attrs, compact=compact, additional_kvp={'notes' : notes_list})
+        kvp = {'notes': [note.to_ordered_dict() for note in self.notes]}
+        return self._to_json(attrs, compact=compact, additional_kvp=kvp)
 
 # -------------------------------------------------------------------------------------------------
 

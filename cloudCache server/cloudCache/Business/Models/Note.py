@@ -12,6 +12,8 @@ from . import Notebook
 from ..Errors import NoteAlreadyExistsError
 
 from arrow import now as arrow_now
+from collections import OrderedDict
+
 
 # -------------------------------------------------------------------------------------------------
 
@@ -37,6 +39,13 @@ class Note(JsonMixin, SQL_ALCHEMY_BASE):
     def __str__(self):
         self_str = '[{nb_name}] {key} - {value}'
         return self_str.format(nb_name=self.notebook.name, key=self.key, value=self.value)
+
+
+    def to_ordered_dict(self):
+        """ Returns an OrderedDict representation of this Note. """
+
+        attrs = ['key', 'value', 'id', 'notebook_id', 'created_on', 'last_updated']
+        return self._to_ordered_dict(attrs)
 
 
     def to_json(self, compact=True):
