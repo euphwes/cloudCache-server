@@ -12,6 +12,9 @@ from . import User
 from ..Errors import NotebookAlreadyExistsError
 
 from arrow import now as arrow_now
+from arrow.arrow import Arrow
+
+from json import dumps, loads
 
 # -------------------------------------------------------------------------------------------------
 
@@ -35,6 +38,28 @@ class Notebook(SQL_ALCHEMY_BASE):
     def __str__(self):
         self_str = '[{username}] {name}'
         return self_str.format(username=self.user.username, name=self.name)
+
+
+    def to_json(self, compact=True):
+        """ Returns a JSON representation of this Notebook. """
+
+        json = dict()
+        attrs = ['id', 'user_id', 'name', 'created_on']
+
+        for attribute in attrs:
+            attr_val = getattr(self, attribute)
+            if isinstance(attr_val, Arrow):
+                attr_val = str(attr_val.to('local'))
+            json[attribute] = attr_val
+
+        # pylint: disable=E1101
+        # Notebook DOES have attribute "notes", it's created as a backref in Note model
+        json['notes'] = [loads(note.to_json()) for note in self.notes]
+
+        if compact:
+            return dumps(json, separators=(',',':'))
+        else:
+            return dumps(json, indent=4, separators=(',', ': '))
 
 # -------------------------------------------------------------------------------------------------
 
