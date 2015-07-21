@@ -44,18 +44,12 @@ class Notebook(JsonMixin, SQL_ALCHEMY_BASE):
 
         # pylint: disable=E1101,W0201,E0203
         # Notebook DOES have attribute "notes", it's created as a backref in Note model
-        # It's ok that we're defining notes_in_notebook outside of __init__, since it's a temporary
-        # attribute for making the JSON. We'll delete notes_in_notebook later after we use it
-        self.notes_in_notebook = [loads(note.to_json(), object_pairs_hook=OrderedDict)\
+        additional_kvp = dict()
+        additional_kvp['notes'] = [loads(note.to_json(), object_pairs_hook=OrderedDict)\
             for note in self.notes]
 
-        attrs = ['name', 'id', 'user_id', 'created_on', 'notes_in_notebook']
-        json = self._to_json(attrs, compact=compact)
-
-        # Now we're done with this temporary attribute for JSON purposes, get rid of it
-        del self.notes_in_notebook
-
-        return json
+        attrs = ['name', 'id', 'user_id', 'created_on']
+        return self._to_json(attrs, compact=compact, additional_kvp=additional_kvp)
 
 # -------------------------------------------------------------------------------------------------
 

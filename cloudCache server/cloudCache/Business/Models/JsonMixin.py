@@ -13,7 +13,7 @@ from collections import OrderedDict
 class JsonMixin(object):
     """ Class which provides easy JSON serialization """
 
-    def _to_json(self, attrs, compact=True):
+    def _to_json(self, attrs, compact=True, additional_kvp=None):
         """ Returns a JSON representation of this object. """
 
         json = OrderedDict()
@@ -27,6 +27,10 @@ class JsonMixin(object):
                 attr_val = str(attr_val.to('local'))
 
             json[attribute] = attr_val
+
+        if additional_kvp:
+            for key, value in additional_kvp.items():
+                json[key] = value
 
         kwargs = dict()
         kwargs['indent'] = 0 if compact else 4
