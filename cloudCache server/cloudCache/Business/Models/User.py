@@ -54,7 +54,7 @@ class User(JsonMixin, SQL_ALCHEMY_BASE):
 # -------------------------------------------------------------------------------------------------
 
 def _get_attributes():
-    """ Returns a list of strings representing the Note attributes which are to be serialized to
+    """ Returns a list of strings representing the User attributes which are to be serialized to
     JSON or an OrderedDict. """
 
     return ['username', 'id', 'first_name', 'last_name', 'email_address', 'api_key', 'date_joined']

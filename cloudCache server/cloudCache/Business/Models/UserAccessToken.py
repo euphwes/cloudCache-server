@@ -8,16 +8,16 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils.types import ArrowType
 
-from . import SQL_ALCHEMY_BASE, DB_SESSION as db
+from . import SQL_ALCHEMY_BASE, JsonMixin, DB_SESSION as db
 from . import User
 from ..Errors import UserDoesntExistError, InvalidApiKeyError
 
-from arrow import utcnow
+from arrow import now
 from uuid import uuid4 as guid
 
 # -------------------------------------------------------------------------------------------------
 
-class UserAccessToken(SQL_ALCHEMY_BASE):
+class UserAccessToken(JsonMixin, SQL_ALCHEMY_BASE):
     """ Represents a cloudCache UserAccessToken. """
 
     __tablename__ = 'USER_ACCESS_TOKEN'
@@ -37,6 +37,24 @@ class UserAccessToken(SQL_ALCHEMY_BASE):
     def __str__(self):
         self_str = '[{u}] {token} - {exp}'
         return self_str.format(u=self.user.username, token=self.access_token, exp=self.expires_on)
+
+
+    def to_ordered_dict(self):
+        """ Returns an OrderedDict representation of this User. """
+        return self._to_ordered_dict(_get_attributes())
+
+
+    def to_json(self, compact=True):
+        """ Returns a JSON representation of this User. """
+        return self._to_json(_get_attributes(), compact=compact)
+
+# -------------------------------------------------------------------------------------------------
+
+def _get_attributes():
+    """ Returns a list of strings representing the UserAccessToken attributes which are to be
+    serialized to JSON or an OrderedDict. """
+
+    return ['id', 'user_id', 'access_token', 'expires_on']
 
 # -------------------------------------------------------------------------------------------------
 
@@ -70,7 +88,7 @@ def create_access_token(username, api_key):
 
     # generate new guid for access token, and set the expiration date 1 hour from right now
     token      = str(guid()).upper().replace('-', '')
-    expires_on = utcnow().replace(hours=1)
+    expires_on = now().replace(hours=1)
 
     user_access_token = UserAccessToken(user=user, access_token=token, expires_on=expires_on)
     db.add(user_access_token)

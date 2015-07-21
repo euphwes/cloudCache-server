@@ -55,8 +55,8 @@ class Notebook(JsonMixin, SQL_ALCHEMY_BASE):
 # -------------------------------------------------------------------------------------------------
 
 def _get_attributes():
-    """ Returns a list of strings representing the Note attributes which are to be serialized to
-    JSON or an OrderedDict. """
+    """ Returns a list of strings representing the Notebook attributes which are to be serialized
+    to JSON or an OrderedDict. """
 
     return ['name', 'id', 'user_id', 'created_on']
 
