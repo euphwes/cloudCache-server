@@ -34,7 +34,7 @@ def create_notebook(name, user):
 
     Args:
         name (string): The new notebook's name.
-        user (cloudCache.Business.Models.Notebook): The new notebook's user.
+        user (cloudCache.Business.Models.User): The new notebook's user.
 
     Returns:
         cloudCache.Business.Models.Notebook: The newly-created Notebook.

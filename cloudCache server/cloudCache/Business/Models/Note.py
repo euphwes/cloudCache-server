@@ -9,6 +9,7 @@ from sqlalchemy_utils.types import ArrowType
 
 from . import SQL_ALCHEMY_BASE, DB_SESSION as db
 from . import Notebook
+from ..Errors import NoteAlreadyExistsError
 
 from arrow import now as arrow_now
 
@@ -27,3 +28,30 @@ class Note(SQL_ALCHEMY_BASE):
     last_updated = Column(ArrowType, default=arrow_now, onupdate=arrow_now)
 
     notebook = relationship(Notebook, backref=backref('notes'))
+
+# -------------------------------------------------------------------------------------------------
+
+def create_note(key, value, notebook):
+    """ Creates a Note entry in the database, and returns the Note object to the caller.
+
+    Args:
+        key (string): The new note's key.
+        value (string): The new note's value.
+        notebook (cloudCache.Business.Models.Notebook): The new note's notebook.
+
+    Returns:
+        cloudCache.Business.Models.Note: The newly-created Note.
+
+    """
+
+    if db.query(Note).filter_by(key=key, notebook=notebook).first():
+        message = "A note with the key '{}' already exists for the notebook '{}'"
+        message = message.format(key, notebook.name)
+        raise NoteAlreadyExistsError(message)
+
+    new_note = Note(key=key, value=value, notebook=notebook)
+
+    db.add(new_note)
+    db.commit()
+
+    return new_note

@@ -16,3 +16,7 @@ class UserAlreadyExistsError(CloudCacheError):
 class NotebookAlreadyExistsError(CloudCacheError):
     """ A custom error which is thrown when attempting to create a Notebook for a specific user,
     and a Notebook with that name already exists for that user. """
+
+class NoteAlreadyExistsError(CloudCacheError):
+    """ A custom error which is thrown when attempting to create a Note for a specific notebook,
+    and a Note with that key already exists for that notebook. """
