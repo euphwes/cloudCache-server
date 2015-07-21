@@ -7,18 +7,17 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy_utils.types import ArrowType
 
-from . import SQL_ALCHEMY_BASE, DB_SESSION as db
+from . import SQL_ALCHEMY_BASE, JsonMixin, DB_SESSION as db
 from . import User
 from ..Errors import NotebookAlreadyExistsError
 
 from arrow import now as arrow_now
-from arrow.arrow import Arrow
-from json import dumps, loads
+from json import loads
 from collections import OrderedDict
 
 # -------------------------------------------------------------------------------------------------
 
-class Notebook(SQL_ALCHEMY_BASE):
+class Notebook(JsonMixin, SQL_ALCHEMY_BASE):
     """ Represents a cloudCache notebook. """
 
     __tablename__ = 'NOTEBOOK'
@@ -43,24 +42,20 @@ class Notebook(SQL_ALCHEMY_BASE):
     def to_json(self, compact=True):
         """ Returns a JSON representation of this Notebook. """
 
-        json = OrderedDict()
-        attrs = ['id', 'user_id', 'name', 'created_on']
-
-        for attribute in attrs:
-            attr_val = getattr(self, attribute)
-            if isinstance(attr_val, Arrow):
-                attr_val = str(attr_val.to('local'))
-            json[attribute] = attr_val
-
-        # pylint: disable=E1101
+        # pylint: disable=E1101,W0201,E0203
         # Notebook DOES have attribute "notes", it's created as a backref in Note model
-        json['notes'] = [loads(note.to_json(), object_pairs_hook=OrderedDict)\
+        # It's ok that we're defining notes_in_notebook outside of __init__, since it's a temporary
+        # attribute for making the JSON. We'll delete notes_in_notebook later after we use it
+        self.notes_in_notebook = [loads(note.to_json(), object_pairs_hook=OrderedDict)\
             for note in self.notes]
 
-        if compact:
-            return dumps(json, separators=(',',':'))
-        else:
-            return dumps(json, indent=4, separators=(',', ': '))
+        attrs = ['name', 'id', 'user_id', 'created_on', 'notes_in_notebook']
+        json = self._to_json(attrs, compact=compact)
+
+        # Now we're done with this temporary attribute for JSON purposes, get rid of it
+        del self.notes_in_notebook
+
+        return json
 
 # -------------------------------------------------------------------------------------------------
 

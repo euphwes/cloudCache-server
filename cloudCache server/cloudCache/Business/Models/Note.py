@@ -7,18 +7,15 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy_utils.types import ArrowType
 
-from . import SQL_ALCHEMY_BASE, DB_SESSION as db
+from . import SQL_ALCHEMY_BASE, JsonMixin, DB_SESSION as db
 from . import Notebook
 from ..Errors import NoteAlreadyExistsError
 
 from arrow import now as arrow_now
-from arrow.arrow import Arrow
-from json import dumps
-from collections import OrderedDict
 
 # -------------------------------------------------------------------------------------------------
 
-class Note(SQL_ALCHEMY_BASE):
+class Note(JsonMixin, SQL_ALCHEMY_BASE):
     """ Represents a cloudCache note. """
 
     __tablename__ = 'NOTE'
@@ -45,19 +42,8 @@ class Note(SQL_ALCHEMY_BASE):
     def to_json(self, compact=True):
         """ Returns a JSON representation of this Note. """
 
-        json = OrderedDict()
-        attrs = ['id', 'notebook_id', 'key', 'value', 'created_on', 'last_updated']
-
-        for attribute in attrs:
-            attr_val = getattr(self, attribute)
-            if isinstance(attr_val, Arrow):
-                attr_val = str(attr_val.to('local'))
-            json[attribute] = attr_val
-
-        if compact:
-            return dumps(json, separators=(',',':'))
-        else:
-            return dumps(json, indent=4, separators=(',', ': '))
+        attrs = ['key', 'value', 'id', 'notebook_id', 'created_on', 'last_updated']
+        return self._to_json(attrs, compact=compact)
 
 # -------------------------------------------------------------------------------------------------
 

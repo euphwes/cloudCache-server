@@ -14,6 +14,7 @@ DB_ENGINE = create_engine(CONN_STRING)
 DB_SESSION = Session(bind=DB_ENGINE)
 SQL_ALCHEMY_BASE = declarative_base()
 
+from .JsonMixin import JsonMixin
 from .User import User
 from .Notebook import Notebook
 from .Note import Note

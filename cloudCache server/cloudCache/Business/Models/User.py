@@ -6,18 +6,17 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy_utils.types import ArrowType
 
-from . import SQL_ALCHEMY_BASE, DB_SESSION as db
+from . import SQL_ALCHEMY_BASE, JsonMixin, DB_SESSION as db
 from ..Errors import UserAlreadyExistsError
 
 from arrow import now as arrow_now
-from arrow.arrow import Arrow
-from json import dumps, loads
 from uuid import uuid4 as guid
+from json import loads
 from collections import OrderedDict
 
 # -------------------------------------------------------------------------------------------------
 
-class User(SQL_ALCHEMY_BASE):
+class User(JsonMixin, SQL_ALCHEMY_BASE):
     """ Represents a cloudCache user. """
 
     __tablename__ = 'USER'
@@ -42,24 +41,21 @@ class User(SQL_ALCHEMY_BASE):
     def to_json(self, compact=True):
         """ Returns a JSON representation of this User. """
 
-        json = OrderedDict()
-        attrs = ['id', 'username', 'first_name', 'last_name', 'email_address', 'api_key', 'date_joined']
-
-        for attribute in attrs:
-            attr_val = getattr(self, attribute)
-            if isinstance(attr_val, Arrow):
-                attr_val = str(attr_val.to('local'))
-            json[attribute] = attr_val
-
-        # pylint: disable=E1101
+        # pylint: disable=E1101,W0201,E0203
         # User DOES have attribute "notebooks", it's created as a backref in Notebook model
-        json['notebooks'] = [loads(notebook.to_json(), object_pairs_hook=OrderedDict)\
+        # It's ok that we're defining user_notebooks outside of __init__, since it's a temporary
+        # attribute for making the JSON. We'll delete user_notebooks later after we use it
+        self.user_notebooks = [loads(notebook.to_json(), object_pairs_hook=OrderedDict)\
             for notebook in self.notebooks]
 
-        if compact:
-            return dumps(json, separators=(',',':'))
-        else:
-            return dumps(json, indent=4, separators=(',', ': '))
+        attrs = ['username', 'id', 'first_name', 'last_name', 'email_address']
+        attrs.extend(['api_key','date_joined', 'user_notebooks'])
+        json = self._to_json(attrs, compact=compact)
+
+        # Now we're done with this temporary attribute for JSON purposes, get rid of it
+        del self.user_notebooks
+
+        return json
 
 # -------------------------------------------------------------------------------------------------
 
