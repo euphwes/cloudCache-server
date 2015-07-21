@@ -16,5 +16,6 @@ SQL_ALCHEMY_BASE = declarative_base()
 
 from .User import User
 from .Notebook import Notebook
+from .Note import Note
 
 SQL_ALCHEMY_BASE.metadata.create_all(DB_ENGINE)
