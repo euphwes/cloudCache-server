@@ -12,6 +12,9 @@ from . import Notebook
 from ..Errors import NoteAlreadyExistsError
 
 from arrow import now as arrow_now
+from arrow.arrow import Arrow
+
+from json import dumps
 
 # -------------------------------------------------------------------------------------------------
 
@@ -37,6 +40,24 @@ class Note(SQL_ALCHEMY_BASE):
     def __str__(self):
         self_str = '[{nb_name}] {key} - {value}'
         return self_str.format(nb_name=self.notebook.name, key=self.key, value=self.value)
+
+
+    def to_json(self, compact=True):
+        """ Returns a JSON representation of this Note. """
+
+        json = dict()
+        attrs = ['id', 'notebook_id', 'key', 'value', 'created_on', 'last_updated']
+
+        for attribute in attrs:
+            attr_val = getattr(self, attribute)
+            if isinstance(attr_val, Arrow):
+                attr_val = str(attr_val.to('local'))
+            json[attribute] = attr_val
+
+        if compact:
+            return dumps(json, separators=(',',':'))
+        else:
+            return dumps(json, indent=4, separators=(',', ': '))
 
 # -------------------------------------------------------------------------------------------------
 
