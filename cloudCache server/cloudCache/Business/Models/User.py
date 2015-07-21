@@ -10,6 +10,10 @@ from . import SQL_ALCHEMY_BASE, DB_SESSION as db
 from ..Errors import UserAlreadyExistsError
 
 from arrow import now as arrow_now
+from arrow.arrow import Arrow
+
+from json import dumps, loads
+
 from uuid import uuid4 as guid
 
 # -------------------------------------------------------------------------------------------------
@@ -34,6 +38,28 @@ class User(SQL_ALCHEMY_BASE):
 
     def __str__(self):
         return self.username
+
+
+    def to_json(self, compact=True):
+        """ Returns a JSON representation of this User. """
+
+        json = dict()
+        attrs = ['id', 'username', 'first_name', 'last_name', 'email_address', 'api_key', 'date_joined']
+
+        for attribute in attrs:
+            attr_val = getattr(self, attribute)
+            if isinstance(attr_val, Arrow):
+                attr_val = str(attr_val.to('local'))
+            json[attribute] = attr_val
+
+        # pylint: disable=E1101
+        # User DOES have attribute "notebooks", it's created as a backref in Notebook model
+        json['notebooks'] = [loads(notebook.to_json()) for notebook in self.notebooks]
+
+        if compact:
+            return dumps(json, separators=(',',':'))
+        else:
+            return dumps(json, indent=4, separators=(',', ': '))
 
 # -------------------------------------------------------------------------------------------------
 
