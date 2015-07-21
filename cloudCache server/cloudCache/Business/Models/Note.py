@@ -29,6 +29,15 @@ class Note(SQL_ALCHEMY_BASE):
 
     notebook = relationship(Notebook, backref=backref('notes'))
 
+
+    def __repr__(self):
+        self_repr = 'Note(notebook_id={nb_id}, key="{key}", value="{value}")'
+        return self_repr.format(nb_id=self.notebook_id, key=self.key, value=self.value)
+
+    def __str__(self):
+        self_str = '[{nb_name}] {key} - {value}'
+        return self_str.format(nb_name=self.notebook.name, key=self.key, value=self.value)
+
 # -------------------------------------------------------------------------------------------------
 
 def create_note(key, value, notebook):
