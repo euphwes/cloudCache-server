@@ -27,6 +27,14 @@ class User(SQL_ALCHEMY_BASE):
     api_key       = Column(String(32))
     date_joined   = Column(ArrowType, default=arrow_now)
 
+
+    def __repr__(self):
+        s = 'User(username="{u}", first_name="{f}", last_name="{l}", email_address="{e}")'
+        return s.format(u=self.username, f=self.first_name, l=self.last_name, e=self.email_address)
+
+    def __str__(self):
+        return self.username
+
 # -------------------------------------------------------------------------------------------------
 
 def create_user(username, first_name, last_name, email_address):
