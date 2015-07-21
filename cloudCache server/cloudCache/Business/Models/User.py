@@ -1,7 +1,9 @@
 """ Contains User SQLAlchemy model, and utility functions for manipulating these models. """
 
-# pylint: disable=W0232,C0103
-# disable no-init warning on User model, and name-too-short warning on `id` variable
+# pylint: disable=W0232,C0103,E1101
+# Disable no-init warning on User model
+# Disable name-too-short warning on `id` variable
+# User DOES have attribute "notebooks", it's created as a backref in Notebook model
 
 from sqlalchemy import Column, Integer, String
 from sqlalchemy_utils.types import ArrowType
@@ -41,14 +43,12 @@ class User(JsonMixin, SQL_ALCHEMY_BASE):
     def to_json(self, compact=True):
         """ Returns a JSON representation of this User. """
 
-        # pylint: disable=E1101,W0201,E0203
-        # User DOES have attribute "notebooks", it's created as a backref in Notebook model
-        additional_kvp = dict()
-        additional_kvp['notebooks'] = [loads(notebook.to_json(), object_pairs_hook=OrderedDict)\
-            for notebook in self.notebooks]
+        nb_list = [loads(nb.to_json(), object_pairs_hook=OrderedDict) for nb in self.notebooks]
 
-        attrs = ['username', 'id', 'first_name', 'last_name', 'email_address', 'api_key', 'date_joined']
-        return self._to_json(attrs, compact=compact, additional_kvp=additional_kvp)
+        attrs = ['username', 'id', 'first_name', 'last_name']
+        attrs.extend(['email_address', 'api_key', 'date_joined'])
+
+        return self._to_json(attrs, compact=compact, additional_kvp={'notebooks': nb_list})
 
 # -------------------------------------------------------------------------------------------------
 

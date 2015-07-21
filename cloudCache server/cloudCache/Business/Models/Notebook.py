@@ -1,7 +1,9 @@
 """ Contains Notebook SQLAlchemy model, and utility functions for manipulating these models. """
 
-# pylint: disable=W0232,C0103
-# disable no-init warning on Notebook model, and name-too-short warning on `id` variable
+# pylint: disable=W0232,C0103,E1101
+# Disable no-init warning on Notebook model
+# Disable name-too-short warning on `id` variable
+# Notebook DOES have attribute "notes", it's created as a backref in Note model
 
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
@@ -42,14 +44,10 @@ class Notebook(JsonMixin, SQL_ALCHEMY_BASE):
     def to_json(self, compact=True):
         """ Returns a JSON representation of this Notebook. """
 
-        # pylint: disable=E1101,W0201,E0203
-        # Notebook DOES have attribute "notes", it's created as a backref in Note model
-        additional_kvp = dict()
-        additional_kvp['notes'] = [loads(note.to_json(), object_pairs_hook=OrderedDict)\
-            for note in self.notes]
+        notes_list = [loads(n.to_json(), object_pairs_hook=OrderedDict) for n in self.notes]
 
         attrs = ['name', 'id', 'user_id', 'created_on']
-        return self._to_json(attrs, compact=compact, additional_kvp=additional_kvp)
+        return self._to_json(attrs, compact=compact, additional_kvp={'notes' : notes_list})
 
 # -------------------------------------------------------------------------------------------------
 
