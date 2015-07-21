@@ -41,23 +41,23 @@ class User(JsonMixin, SQL_ALCHEMY_BASE):
     def to_ordered_dict(self):
         """ Returns an OrderedDict representation of this User. """
 
-        attrs = ['username', 'id', 'first_name', 'last_name']
-        attrs.extend(['email_address', 'api_key', 'date_joined'])
-
         kvp = {'notebooks': [notebook.to_ordered_dict() for notebook in self.notebooks]}
-
-        return self._to_ordered_dict(attrs, additional_kvp=kvp)
+        return self._to_ordered_dict(_get_attributes(), additional_kvp=kvp)
 
 
     def to_json(self, compact=True):
         """ Returns a JSON representation of this User. """
 
-        attrs = ['username', 'id', 'first_name', 'last_name']
-        attrs.extend(['email_address', 'api_key', 'date_joined'])
-
         kvp = {'notebooks': [notebook.to_ordered_dict() for notebook in self.notebooks]}
+        return self._to_json(_get_attributes(), compact=compact, additional_kvp=kvp)
 
-        return self._to_json(attrs, compact=compact, additional_kvp=kvp)
+# -------------------------------------------------------------------------------------------------
+
+def _get_attributes():
+    """ Returns a list of strings representing the Note attributes which are to be serialized to
+    JSON or an OrderedDict. """
+
+    return ['username', 'id', 'first_name', 'last_name', 'email_address', 'api_key', 'date_joined']
 
 # -------------------------------------------------------------------------------------------------
 
