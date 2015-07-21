@@ -18,5 +18,6 @@ from .JsonMixin import JsonMixin
 from .User import User
 from .Notebook import Notebook
 from .Note import Note
+from .UserAccessToken import UserAccessToken
 
 SQL_ALCHEMY_BASE.metadata.create_all(DB_ENGINE)

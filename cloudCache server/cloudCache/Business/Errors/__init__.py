@@ -10,13 +10,19 @@ class CloudCacheError(Exception):
 
 # -------------------------------------------------------------------------------------------------
 
+class UserDoesntExistError(CloudCacheError):
+    """ Raised when a user doesn't exist for a specified username. """
+
 class UserAlreadyExistsError(CloudCacheError):
-    """ A custom error which is thrown when a given username is already taken. """
+    """ Raised when a given username is already taken. """
+
+class InvalidApiKeyError(CloudCacheError):
+    """ Raised when an incorrect API key is provided for a specified username. """
 
 class NotebookAlreadyExistsError(CloudCacheError):
-    """ A custom error which is thrown when attempting to create a Notebook for a specific user,
-    and a Notebook with that name already exists for that user. """
+    """ Raised when attempting to create a Notebook for a specific user, and a Notebook with that
+    name already exists for that user. """
 
 class NoteAlreadyExistsError(CloudCacheError):
-    """ A custom error which is thrown when attempting to create a Note for a specific notebook,
-    and a Note with that key already exists for that notebook. """
+    """ Raised when attempting to create a Note for a specific notebook, and a Note with that key
+    already exists for that notebook. """
