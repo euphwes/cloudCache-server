@@ -27,6 +27,15 @@ class Notebook(SQL_ALCHEMY_BASE):
 
     user = relationship(User, backref=backref('notebooks'))
 
+
+    def __repr__(self):
+        self_repr = 'Notebook(user_id={user_id}, name="{name}")'
+        return self_repr.format(user_id=self.user_id, name=self.name)
+
+    def __str__(self):
+        self_str = '[{username}] {name}'
+        return self_str.format(username=self.user.username, name=self.name)
+
 # -------------------------------------------------------------------------------------------------
 
 def create_notebook(name, user):
