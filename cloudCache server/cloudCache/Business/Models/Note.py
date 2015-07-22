@@ -16,7 +16,18 @@ from arrow import now as arrow_now
 # -------------------------------------------------------------------------------------------------
 
 class Note(JsonMixin, SQL_ALCHEMY_BASE):
-    """ Represents a cloudCache note. """
+    """ Represents a cloudCache note.
+
+    Attributes:
+        id (int): Unique ID of this note.
+        notebook_id (int): Unique ID of this note's parent notebook.
+        key (string): Key for this note.
+        value (string): Value/contents of this note.
+        created_on (Arrow): Date/time that this note was originally created.
+        last_updated (Arrow): Date/time that this note was last modified.
+        notebook (cloudCache.Business.Models.Notebook): This note's Notebook object.
+
+    """
 
     __tablename__ = 'NOTE'
 
