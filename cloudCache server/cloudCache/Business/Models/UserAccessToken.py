@@ -18,7 +18,16 @@ from uuid import uuid4 as guid
 # -------------------------------------------------------------------------------------------------
 
 class UserAccessToken(JsonMixin, SQL_ALCHEMY_BASE):
-    """ Represents a cloudCache UserAccessToken. """
+    """ Represents a cloudCache UserAccessToken.
+
+    Attributes:
+        id (int): This UserAccessToken's unique ID.
+        user_id (int): This UserAccessToken's User's unique ID.
+        access_token (string): A randomly-generated GUID which acts as a key for API operations.
+        expires_on (Arrow): The date/time this UserAccessToken expires, 1 hour after generation.
+        user (cloudCache.Business.Models.User): The User to which this UserAccessToken belongs.
+
+    """
 
     __tablename__ = 'USER_ACCESS_TOKEN'
 
