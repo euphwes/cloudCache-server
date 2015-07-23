@@ -17,7 +17,19 @@ from uuid import uuid4 as guid
 # -------------------------------------------------------------------------------------------------
 
 class User(JsonMixin, SQL_ALCHEMY_BASE):
-    """ Represents a cloudCache user. """
+    """ Represents a cloudCache user.
+
+    Attributes:
+        id (int): This User's unique ID.
+        username (string): This User's username.
+        first_name (string): This User's first name.
+        last_name (string): This User's last name.
+        email_address (string): This User's email address.
+        api_key (string): Randomly generated GUID which acts as a key for this user to obtain a
+            temporary UserAccessToken.
+        date_joined (Arrow): The date/time that this User account was created.
+
+    """
 
     __tablename__ = 'USER'
 
