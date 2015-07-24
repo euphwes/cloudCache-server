@@ -1,4 +1,4 @@
-""" A REST API for the cloudCache application. """
+""" The cloudCache REST API. Intended for use in future CLI and Android apps. """
 
 import tornado.web
 import tornado.ioloop
