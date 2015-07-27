@@ -5,6 +5,7 @@ import tornado.ioloop
 from tornado.escape import json_decode
 
 from Business.Models.User import create_user
+from Business.Errors import UserAlreadyExistsError
 
 # -------------------------------------------------------------------------------------------------
 
@@ -17,12 +18,23 @@ class UserHandler(tornado.web.RequestHandler):
 
     def post(self, **kwargs):
         info = json_decode(self.request.body)
-        user = create_user(info['username'], info['first_name'], info['last_name'], info['email'])
 
-        response = {
-            'status': 'OK',
-            'user'  : user.to_ordered_dict()
-        }
+        try:
+            username   = info['username']
+            first_name = info['first_name']
+            last_name  = info['last_name']
+            email      = info['email']
+            user = create_user(username, first_name, last_name, email)
+            response = {
+                'status': 'OK',
+                'user'  : user.to_ordered_dict()
+            }
+
+        except UserAlreadyExistsError as error:
+            response = {
+                'status': 'Error',
+                'message': str(error)
+            }
 
         self.write(response)
 
