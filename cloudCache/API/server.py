@@ -2,42 +2,12 @@
 
 import tornado.web
 import tornado.ioloop
-from tornado.escape import json_decode
 
-from ..Business.Models.User import create_user
-from ..Business.Errors import UserAlreadyExistsError
+from Handlers import UserHandler
 
 # -------------------------------------------------------------------------------------------------
 
 SERVER_PORT = 8888
-
-# -------------------------------------------------------------------------------------------------
-
-class UserHandler(tornado.web.RequestHandler):
-    """ The request handler for managing cloudCache users. """
-
-    def post(self, **kwargs):
-        info = json_decode(self.request.body)
-
-        try:
-            username   = info['username']
-            first_name = info['first_name']
-            last_name  = info['last_name']
-            email      = info['email']
-            user = create_user(username, first_name, last_name, email)
-            response = {
-                'status': 'OK',
-                'user'  : user.to_ordered_dict()
-            }
-
-        except UserAlreadyExistsError as error:
-            response = {
-                'status' : 'Error',
-                'message': str(error)
-            }
-
-        self.write(response)
-
 
 # -------------------------------------------------------------------------------------------------
 
