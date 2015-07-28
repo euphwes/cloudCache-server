@@ -91,7 +91,7 @@ def create_access_token(username, api_key):
         raise UserDoesntExistError(message)
 
     if user.api_key != api_key:
-        message = 'The API key provided for user "{}" is invalid.'.format(api_key)
+        message = 'The API key provided for user "{}" is invalid.'.format(username)
         raise InvalidApiKeyError(message)
 
     # generate new guid for access token, and set the expiration date 1 hour from right now
