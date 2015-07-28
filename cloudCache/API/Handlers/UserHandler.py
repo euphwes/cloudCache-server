@@ -3,8 +3,9 @@
 import tornado.web
 from tornado.escape import json_decode
 
+from cloudCache.Business.Models import User, DB_SESSION as db
 from cloudCache.Business.Models.User import create_user
-from cloudCache.Business.Errors import UserAlreadyExistsError
+from cloudCache.Business.Errors import UserAlreadyExistsError, UserDoesntExistError
 
 # -------------------------------------------------------------------------------------------------
 
@@ -30,5 +31,29 @@ class UserHandler(tornado.web.RequestHandler):
                 'status' : 'Error',
                 'message': str(error)
             }
+
+        self.write(response)
+
+
+    def get(self, username):
+
+        # looking for a specific user
+        if username is not None:
+            user = db.query(User).filter_by(username=username).first()
+            if user:
+                response = {
+                    'status': 'OK',
+                    'user'  : user.to_ordered_dict()
+                }
+            else:
+                response = {
+                    'status': 'Error',
+                    'message': 'The user "{}" does not exist.'.format(username)
+                }
+
+        # Get all users
+        else:
+            response = {}
+            # TODO: implement getting all users
 
         self.write(response)
