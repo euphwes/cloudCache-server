@@ -3,13 +3,15 @@
 import tornado.web
 from tornado.escape import json_decode
 
+from . import AuthorizeHandler
+
 from cloudCache.Business.Models import User, UserAccessToken, DB_SESSION as db
 from cloudCache.Business.Models.UserAccessToken import create_access_token
 from cloudCache.Business.Errors import InvalidApiKeyError, UserDoesntExistError
 
 # -------------------------------------------------------------------------------------------------
 
-class AccessHandler(tornado.web.RequestHandler):
+class AccessHandler(AuthorizeHandler):
     """ The request handler for creating and delivering cloudCache UserAccessTokens. """
 
     def get(self, username, api_key):
