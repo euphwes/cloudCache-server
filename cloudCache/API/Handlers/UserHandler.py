@@ -7,6 +7,8 @@ from cloudCache.Business.Models import User, DB_SESSION as db
 from cloudCache.Business.Models.User import create_user
 from cloudCache.Business.Errors import UserAlreadyExistsError, UserDoesntExistError
 
+from cloudCache.API import authorize
+
 # -------------------------------------------------------------------------------------------------
 
 class UserHandler(tornado.web.RequestHandler):
@@ -53,7 +55,20 @@ class UserHandler(tornado.web.RequestHandler):
 
         # Get all users
         else:
-            response = {}
-            # TODO: implement getting all users
+            if not authorize(self.request.headers):
+                message = 'You are not authorized for this action. '
+                message += 'Please check that you have supplied a username and access token, '
+                message += 'that the username exists, and your access token is valid and has not expired.'
+                response = {
+                    'status':  'Error',
+                    'message': message
+                }
+                self.write(response)
+
+            users = [user.to_ordered_dict() for user in db.query(User).all()]
+            response = {
+                'status': 'OK',
+                'users' : users
+            }
 
         self.write(response)
