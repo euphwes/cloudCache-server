@@ -1,8 +1,5 @@
 """ Module for the AccessHandler class in the cloudCache REST API. """
 
-import tornado.web
-from tornado.escape import json_decode
-
 from . import AuthorizeHandler
 
 from cloudCache.Business.Models import User, UserAccessToken, DB_SESSION as db

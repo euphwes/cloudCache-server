@@ -38,6 +38,10 @@ class UserHandler(AuthorizeHandler):
 
     def get(self, username):
 
+        if not username:
+            if not self.authorize():
+                return
+
         # looking for a specific user
         if username:
             user = db.query(User).filter_by(username=username).first()
@@ -54,9 +58,6 @@ class UserHandler(AuthorizeHandler):
 
         # Get all users
         else:
-            if not self.authorize():
-                return
-
             users = [user.to_ordered_dict() for user in db.query(User).all()]
             response = {
                 'status': 'OK',
