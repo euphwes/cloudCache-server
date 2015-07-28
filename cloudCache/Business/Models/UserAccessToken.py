@@ -81,8 +81,7 @@ def create_access_token(username, api_key):
 
     Raises:
         cloudCache.Business.Errors.UserDoesntExistError: If `username` doesn't exist.
-        cloudCache.Business.Errors.InvalidApiKeyError: If `api_key` doesn't match
-        `username`'s api_key.
+        cloudCache.Business.Errors.InvalidApiKeyError: If `api_key` doesn't match the user's key.
 
     """
 

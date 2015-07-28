@@ -3,7 +3,7 @@
 import tornado.web
 import tornado.ioloop
 
-from Handlers import UserHandler
+from Handlers import UserHandler, AccessHandler
 
 # -------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,8 @@ SERVER_PORT = 8888
 def main():
     """ Runs the server. """
 
-    routes = [(r'/users/?(?P<username>[a-zA-Z0-9_-]+)?', UserHandler)]
+    routes = [(r'/users/?(?P<username>[a-zA-Z0-9_-]+)?', UserHandler),
+              (r'/access/(?P<username>[a-zA-Z0-9_-]+)/(?P<api_key>[A-Z0-9]+)', AccessHandler)]
 
     application = tornado.web.Application(routes)
     application.listen(SERVER_PORT)
