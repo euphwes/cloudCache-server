@@ -39,8 +39,7 @@ class UserHandler(AuthorizeHandler):
     def get(self, username):
 
         if not username:
-            if not self.authorize():
-                return
+            self.authorize()
 
         # looking for a specific user
         if username:

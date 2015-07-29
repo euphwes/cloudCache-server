@@ -15,8 +15,7 @@ class NotebookHandler(AuthorizeHandler):
 
     def post(self, **kwargs):
 
-        if not self.authorize():
-            return
+        self.authorize()
 
         url_username    = kwargs.get('username')
         header_username = self.request.headers.get('username')

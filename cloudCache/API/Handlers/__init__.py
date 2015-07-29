@@ -38,7 +38,7 @@ class AuthorizeHandler(tornado.web.RequestHandler):
 
         if not (username and access_token):
             self.write(fail_response)
-            return False
+            raise tornado.web.Finish()
 
         self._purge_expired_tokens()
 
@@ -47,9 +47,7 @@ class AuthorizeHandler(tornado.web.RequestHandler):
 
         if not token:
             self.write(fail_response)
-            return False
-
-        return True
+            raise tornado.web.Finish()
 
 # -------------------------------------------------------------------------------------------------
 
