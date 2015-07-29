@@ -14,13 +14,11 @@ class NotebookHandler(AuthorizeHandler):
     """ The request handler for managing cloudCache notebooks. """
 
     def post(self, **kwargs):
-
         self.authorize()
 
-        url_username    = kwargs.get('username')
-        header_username = self.request.headers.get('username')
+        url_username = kwargs.get('username')
 
-        if url_username != header_username:
+        if url_username != self.current_user.username:
             message = 'You ({}) cannot create a notebook for another user ({}).'
             message = message.format(header_username, url_username)
             self.write({

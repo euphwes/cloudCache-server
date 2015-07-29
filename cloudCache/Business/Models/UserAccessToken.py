@@ -105,7 +105,7 @@ def create_access_token(username, api_key):
     return user_access_token
 
 
-def delete_expired_tokens():
+def _delete_expired_tokens():
     """ Delete any UserAccessTokens from the database which are expired (older than one hour). """
 
     all_tokens = db.query(UserAccessToken).all()
@@ -115,3 +115,26 @@ def delete_expired_tokens():
         db.delete(expired_token)
 
     db.commit()
+
+
+def get_user_for_token(access_token):
+    """ Returns the user for this access token string. Only returns a user if the token exists in
+    the database, and the token has not expired.
+
+    Args:
+        access_token (string): The access token string to look up.
+
+    Returns:
+        cloudCache.Business.Models.User: The user for this token. `None` if the token is expired,
+            or doesn't exist.
+
+    """
+
+    _delete_expired_tokens()
+
+    token = db.query(UserAccessToken).filter_by(access_token=access_token).first()
+
+    if not token:
+        return None
+
+    return token.user

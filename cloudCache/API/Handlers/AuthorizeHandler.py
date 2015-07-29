@@ -1,7 +1,7 @@
 import arrow
 import tornado.web
 from cloudCache.Business.Models import DB_SESSION as db, User, UserAccessToken
-from cloudCache.Business.Models.UserAccessToken import delete_expired_tokens
+from cloudCache.Business.Models.UserAccessToken import get_user_for_token
 
 # -------------------------------------------------------------------------------------------------
 
@@ -21,18 +21,16 @@ class AuthorizeHandler(tornado.web.RequestHandler):
             'message': message
         }
 
-        username     = self.request.headers.get('username')
         access_token = self.request.headers.get('access token')
 
-        if not (username and access_token):
+        if not access_token:
             self.write(fail_response)
             raise tornado.web.Finish()
 
-        delete_expired_tokens()
+        user = get_user_for_token(access_token)
 
-        user = db.query(User).filter_by(username=username).first()
-        token = db.query(UserAccessToken).filter_by(user=user, access_token=access_token).first()
-
-        if not token:
+        if not user:
             self.write(fail_response)
             raise tornado.web.Finish()
+
+        self.current_user = user
