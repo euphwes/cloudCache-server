@@ -12,7 +12,7 @@ from . import SQL_ALCHEMY_BASE, JsonMixin, DB_SESSION as db
 from . import User
 from ..Errors import UserDoesntExistError, InvalidApiKeyError
 
-from arrow import now
+import arrow
 from uuid import uuid4 as guid
 
 # -------------------------------------------------------------------------------------------------
@@ -96,10 +96,22 @@ def create_access_token(username, api_key):
 
     # generate new guid for access token, and set the expiration date 1 hour from right now
     token      = str(guid()).upper().replace('-', '')
-    expires_on = now().replace(hours=1)
+    expires_on = arrow.now().replace(hours=1)
 
     user_access_token = UserAccessToken(user=user, access_token=token, expires_on=expires_on)
     db.add(user_access_token)
     db.commit()
 
     return user_access_token
+
+
+def delete_expired_tokens():
+    """ Delete any UserAccessTokens from the database which are expired (older than one hour). """
+
+    all_tokens = db.query(UserAccessToken).all()
+    expired_tokens = [t for t in all_tokens if arrow.get(t.expires_on) <= arrow.now()]
+
+    for expired_token in expired_tokens:
+        db.delete(expired_token)
+
+    db.commit()
