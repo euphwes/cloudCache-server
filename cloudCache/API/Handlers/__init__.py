@@ -55,3 +55,4 @@ class AuthorizeHandler(tornado.web.RequestHandler):
 
 from .UserHandler import UserHandler
 from .AccessHandler import AccessHandler
+from .NotebookHandler import NotebookHandler
