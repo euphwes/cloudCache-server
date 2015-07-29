@@ -9,13 +9,20 @@ from Handlers import UserHandler, AccessHandler
 
 SERVER_PORT = 8888
 
+USERNAME_OPT = r'?(?P<username>[a-zA-Z0-9_-]+)?'
+USERNAME_REQ = r'(?P<username>[a-zA-Z0-9_-]+)'
+API_KEY_REQ  = r'(?P<api_key>[A-Z0-9]+)'
+
+USER_HANDLER_URL   = '/users/{}'.format(USERNAME_OPT)
+ACCESS_HANDLER_URL = '/access/{}/{}'.format(USERNAME_REQ, API_KEY_REQ)
+
 # -------------------------------------------------------------------------------------------------
 
 def main():
     """ Runs the server. """
 
-    routes = [(r'/users/?(?P<username>[a-zA-Z0-9_-]+)?', UserHandler),
-              (r'/access/(?P<username>[a-zA-Z0-9_-]+)/(?P<api_key>[A-Z0-9]+)', AccessHandler)]
+    routes = [(USER_HANDLER_URL, UserHandler),
+              (ACCESS_HANDLER_URL, AccessHandler)]
 
     application = tornado.web.Application(routes)
     application.listen(SERVER_PORT)
