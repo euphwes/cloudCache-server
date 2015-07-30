@@ -14,6 +14,18 @@ class UserHandler(AuthorizeHandler):
     """ The request handler for managing cloudCache users. """
 
     def post(self, **kwargs):
+        """ Implements HTTP POST for the UserHandler. Creates a new user. The user must provide an
+        HTTP body of the type application/json, with the following format:
+
+        {
+            "username"  : "jswanson",
+            "first_name": "Joe",
+            "last_name" : "Swanson",
+            "email"     : "jswanson@gmail.com"
+        }
+
+        Returns the user ID and API key if successful, or an error message otherwise. """
+
         info = json_decode(self.request.body)
 
         try:
@@ -22,13 +34,20 @@ class UserHandler(AuthorizeHandler):
             last_name  = info['last_name']
             email      = info['email']
             user = create_user(username, first_name, last_name, email)
+
             response = {
-                'status': 'OK',
-                'user'  : user.to_ordered_dict()
+                'user_id': user.id,
+                'api_key': user.api_key
             }
 
         except UserAlreadyExistsError as error:
-            response = self.get_failure_response(error)
+            self.set_status(409) # Conflict
+            response = {'message': str(error)}
+
+        except KeyError:
+            self.set_status(400) # Bad Request
+            message = 'Invalid POST body. Must include username, first and last names, and email.'
+            response = {'message': message}
 
         self.write(response)
 
