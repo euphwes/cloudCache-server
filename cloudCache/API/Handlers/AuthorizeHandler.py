@@ -38,10 +38,7 @@ class AuthorizeHandler(tornado.web.RequestHandler):
         message  = 'You are not authorized for this action. '
         message += 'Please check that you have supplied a username and access token, '
         message += 'that the username exists, and your access token is valid and has not expired.'
-        fail_response = {
-            'status':  'Error',
-            'message': message
-        }
+        fail_response = self.get_failure_response(message)
 
         access_token = self.request.headers.get('access token')
 

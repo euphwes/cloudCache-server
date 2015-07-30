@@ -13,6 +13,34 @@ from cloudCache.Business.Errors import NotebookAlreadyExistsError
 class NotebookHandler(AuthorizeHandler):
     """ The request handler for managing cloudCache notebooks. """
 
+
+    def get(self, **kwargs):
+        self.authorize()
+
+        notebook = kwargs.get('notebook')
+
+        url_username = kwargs.get('username')
+        if url_username != self.current_user.username:
+            message = 'You ({}) cannot retrieve notebooks for another user ({}).'
+            message = message.format(self.current_user.username, url_username)
+            self.write(self.get_failure_response(message))
+            return
+
+        if notebook:
+            response = self.get_failure_response('Not implemented yet.')
+
+        else:
+            notebooks = db.query(Notebook).filter_by(user=self.current_user).all()
+            notebooks = [notebook.to_ordered_dict() for notebook in notebooks]
+            response = {
+                'status': 'OK',
+                'notebooks' : notebooks
+            }
+
+        self.write(response)
+
+
+
     def post(self, **kwargs):
         self.authorize()
 
@@ -20,7 +48,7 @@ class NotebookHandler(AuthorizeHandler):
 
         if url_username != self.current_user.username:
             message = 'You ({}) cannot create a notebook for another user ({}).'
-            message = message.format(header_username, url_username)
+            message = message.format(self.current_user.username, url_username)
             self.write(self.get_failure_response(message))
             return
 
