@@ -39,17 +39,25 @@ class NotebookHandler(AuthorizeHandler):
 
 
     def post(self, **kwargs):
+        """ Implements the HTTP POST call on /notebooks/{notebook}. The user must provide an HTTP
+        body of the type application/json, with the following format:
+
+        {
+            'notebook_name': 'My Awesome Notebook'
+        }
+
+        Returns the notebook ID if successful, or an error message otherwise. """
+
         self.authorize()
 
         notebook_name = json_decode(self.request.body).get('notebook_name')
 
         try:
             notebook = create_notebook(notebook_name, self.current_user)
-            response = {
-                'status': 'OK',
-                'notebook': notebook.to_ordered_dict()
-            }
+            response = {'notebook_id': notebook.id}
+
         except NotebookAlreadyExistsError as e:
-            response = self.get_failure_response(e)
+            self.set_status(409) # Conflict
+            response = {'message': str(e)}
 
         self.write(response)
