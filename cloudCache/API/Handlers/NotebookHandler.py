@@ -10,26 +10,29 @@ from cloudCache.Business.Errors import NotebookAlreadyExistsError
 
 # -------------------------------------------------------------------------------------------------
 
+# /notebooks/{notebook}
+
 class NotebookHandler(AuthorizeHandler):
     """ The request handler for managing cloudCache notebooks. """
 
 
     def get(self, **kwargs):
+        """ Implements the HTTP GET call on /notebooks/{notebook}. If the user does not provide a
+        a notebook, the call will retrieve details for all notebooks that belong to the
+        authenticated user. If the caller provides a notebook, the call will retrieve all notes in
+        that notebook. """
 
         self.authorize()
 
         notebook = kwargs.get('notebook')
 
         if notebook:
-            response = self.get_failure_response('Not implemented yet.')
+            self.set_status(500) # Not implemented
+            response = {'message': 'Not yet implemented.'}
 
         else:
             notebooks = db.query(Notebook).filter_by(user=self.current_user).all()
-            notebooks = [notebook.to_ordered_dict() for notebook in notebooks]
-            response = {
-                'status': 'OK',
-                'notebooks' : notebooks
-            }
+            response  = {'notebooks': [notebook.name for notebook in notebooks]}
 
         self.write(response)
 
