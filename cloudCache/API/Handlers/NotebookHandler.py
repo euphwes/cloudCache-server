@@ -50,14 +50,21 @@ class NotebookHandler(AuthorizeHandler):
 
         self.authorize()
 
-        notebook_name = json_decode(self.request.body).get('notebook_name')
+        info = json_decode(self.request.body)
 
         try:
+            notebook_name = info['notebook_name']
+
             notebook = create_notebook(notebook_name, self.current_user)
             response = {'notebook_id': notebook.id}
 
         except NotebookAlreadyExistsError as e:
             self.set_status(409) # Conflict
             response = {'message': str(e)}
+
+        except KeyError:
+            self.set_status(400) # Bad Request
+            message = 'Invalid POST body. Must include notebook_name.'
+            response = {'message': message}
 
         self.write(response)
