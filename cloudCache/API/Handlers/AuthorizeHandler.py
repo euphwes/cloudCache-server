@@ -20,12 +20,14 @@ class AuthorizeHandler(tornado.web.RequestHandler):
         access_token = self.request.headers.get('access token')
 
         if not access_token:
+            self.set_status(401) # unauthenticated
             self.write({'message': message})
             raise tornado.web.Finish()
 
         user = get_user_for_token(access_token)
 
         if not user:
+            self.set_status(401) # unauthenticated
             self.write({'message': message})
             raise tornado.web.Finish()
 
