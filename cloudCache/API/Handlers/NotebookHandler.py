@@ -21,10 +21,7 @@ class NotebookHandler(AuthorizeHandler):
         if url_username != self.current_user.username:
             message = 'You ({}) cannot create a notebook for another user ({}).'
             message = message.format(header_username, url_username)
-            self.write({
-                'status' : 'Error',
-                'message': message
-            })
+            self.write(self.get_failure_response(message))
             return
 
         notebook_name = json_decode(self.request.body).get('notebook_name')
@@ -32,10 +29,7 @@ class NotebookHandler(AuthorizeHandler):
 
         if not user:
             message = 'User "{}" doesn\'t exist.'.format(url_username)
-            self.write({
-                'status' : 'Error',
-                'message': message
-            })
+            self.write(self.get_failure_response(message))
             return
 
         try:
@@ -45,9 +39,6 @@ class NotebookHandler(AuthorizeHandler):
                 'notebook': notebook.to_ordered_dict()
             }
         except NotebookAlreadyExistsError as e:
-            response = {
-                'status': 'Error',
-                'message': str(e)
-            }
+            response = self.get_failure_response(e)
 
         self.write(response)

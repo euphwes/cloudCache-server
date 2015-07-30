@@ -28,10 +28,7 @@ class UserHandler(AuthorizeHandler):
             }
 
         except UserAlreadyExistsError as error:
-            response = {
-                'status' : 'Error',
-                'message': str(error)
-            }
+            response = self.get_failure_response(error)
 
         self.write(response)
 
@@ -50,10 +47,8 @@ class UserHandler(AuthorizeHandler):
                     'user'  : user.to_ordered_dict()
                 }
             else:
-                response = {
-                    'status': 'Error',
-                    'message': 'The user "{}" does not exist.'.format(username)
-                }
+                message = 'The user "{}" does not exist.'.format(username)
+                response = self.get_failure_response(message)
 
         # Get all users
         else:

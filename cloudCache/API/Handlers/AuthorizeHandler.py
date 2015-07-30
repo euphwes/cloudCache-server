@@ -10,6 +10,28 @@ class AuthorizeHandler(tornado.web.RequestHandler):
     user for a cloudCache handler web request via access token and username. """
 
 
+    def get_failure_response(self, exception):
+        """ Returns a dict which is to be written as the RequestHandler's response. The status is
+        'Error' and the message is the string representation of the provided exception, or the
+        provided error message itself.
+
+        Args:
+            exception (Exception or string): The Exception which is the cause of the failure, or
+                the error message to be delivered.
+
+        Returns:
+            dict: The dict object which is to be written as the response to this HTTP call.
+
+        """
+
+        resp = {
+            'status' : 'Error',
+            'message': str(exception)
+        }
+
+        return resp
+
+
     def authorize(self):
         """ Check username and access token are provided, and that they're valid and have not expired. """
 

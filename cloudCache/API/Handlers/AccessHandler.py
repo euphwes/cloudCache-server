@@ -21,9 +21,6 @@ class AccessHandler(AuthorizeHandler):
             }
 
         except (InvalidApiKeyError, UserDoesntExistError) as e:
-            response = {
-                'status' : 'Error',
-                'message': str(e)
-            }
+            response = self.get_failure_response(e)
 
         self.write(response)
