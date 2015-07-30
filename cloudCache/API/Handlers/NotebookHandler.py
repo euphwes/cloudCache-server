@@ -15,16 +15,10 @@ class NotebookHandler(AuthorizeHandler):
 
 
     def get(self, **kwargs):
+
         self.authorize()
 
         notebook = kwargs.get('notebook')
-
-        url_username = kwargs.get('username')
-        if url_username != self.current_user.username:
-            message = 'You ({}) cannot retrieve notebooks for another user ({}).'
-            message = message.format(self.current_user.username, url_username)
-            self.write(self.get_failure_response(message))
-            return
 
         if notebook:
             response = self.get_failure_response('Not implemented yet.')
@@ -44,24 +38,10 @@ class NotebookHandler(AuthorizeHandler):
     def post(self, **kwargs):
         self.authorize()
 
-        url_username = kwargs.get('username')
-
-        if url_username != self.current_user.username:
-            message = 'You ({}) cannot create a notebook for another user ({}).'
-            message = message.format(self.current_user.username, url_username)
-            self.write(self.get_failure_response(message))
-            return
-
         notebook_name = json_decode(self.request.body).get('notebook_name')
-        user = db.query(User).filter_by(username=url_username).first()
-
-        if not user:
-            message = 'User "{}" doesn\'t exist.'.format(url_username)
-            self.write(self.get_failure_response(message))
-            return
 
         try:
-            notebook = create_notebook(notebook_name, user)
+            notebook = create_notebook(notebook_name, self.current_user)
             response = {
                 'status': 'OK',
                 'notebook': notebook.to_ordered_dict()

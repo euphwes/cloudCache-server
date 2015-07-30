@@ -16,7 +16,7 @@ API_KEY_REQ  = r'(?P<api_key>[A-Z0-9]+)'
 
 USER_HANDLER_URL     = '/users/{}'.format(USERNAME_OPT)
 ACCESS_HANDLER_URL   = '/access/{}/{}'.format(USERNAME_REQ, API_KEY_REQ)
-NOTEBOOK_HANDLER_URL = '/users/{}/notebooks/{}'.format(USERNAME_REQ, NOTEBOOK_OPT)
+NOTEBOOK_HANDLER_URL = '/notebooks/{}'.format(NOTEBOOK_OPT)
 
 # -------------------------------------------------------------------------------------------------
 
