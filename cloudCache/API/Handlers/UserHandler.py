@@ -10,6 +10,8 @@ from cloudCache.Business.Errors import UserAlreadyExistsError, UserDoesntExistEr
 
 # -------------------------------------------------------------------------------------------------
 
+# /users/{username}
+
 class UserHandler(AuthorizeHandler):
     """ The request handler for managing cloudCache users. """
 
@@ -53,6 +55,9 @@ class UserHandler(AuthorizeHandler):
 
 
     def get(self, username):
+        """ Implements the HTTP GET call on /users/{username}. If the caller does not provide a
+        a username, the call will retrieve details for all users in the system. If the caller
+        provides a username, the call will retrieve all details for that user. """
 
         if not username:
             self.authorize()
@@ -61,20 +66,13 @@ class UserHandler(AuthorizeHandler):
         if username:
             user = db.query(User).filter_by(username=username).first()
             if user:
-                response = {
-                    'status': 'OK',
-                    'user'  : user.to_ordered_dict()
-                }
+                response = {'user': user.to_ordered_dict()}
             else:
-                message = 'The user "{}" does not exist.'.format(username)
-                response = self.get_failure_response(message)
+                self.set_status(404) # Not Found
+                response = {'message': 'The user "{}" does not exist.'.format(username)}
 
         # Get all users
         else:
-            users = [user.to_ordered_dict() for user in db.query(User).all()]
-            response = {
-                'status': 'OK',
-                'users' : users
-            }
+            response = {'users' : [user.username for user in db.query(User).all()]}
 
         self.write(response)
