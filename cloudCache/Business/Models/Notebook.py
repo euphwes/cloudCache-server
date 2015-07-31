@@ -104,7 +104,7 @@ def get_notebook(notebook_id, user):
     """ Retrieve a Notebook for a given user.
 
     Args:
-        id (int): The notebook's id.
+        notebook_id (string): The notebook's id.
         user (cloudCache.Business.Models.User): The notebook's user.
 
     Returns:

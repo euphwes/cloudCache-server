@@ -25,19 +25,27 @@ class NoteHandler(AuthorizeHandler):
         notebook_id = kwargs.get('notebook')
         note_id     = kwargs.get('note')
 
-        if not note_id    :
+        if not note_id:
             # get all notes for this notebook
             try:
+                # will raise ValueError if the notebook_id isn't parseable as an int
+                int(notebook_id)
+
                 notebook = get_notebook(notebook_id, self.current_user)
-                notes = db.query(Note).filter_by(notebook=notebook).all()
                 response = {
                     'notebook': notebook.name,
-                    'notes'   : [note.to_ordered_dict() for note in notes]
+                    'notes'   : [note.to_ordered_dict() for note in notebook.notes]
                 }
 
             except NotebookDoesntExistError as e:
                 self.set_status(404) # Not Found
                 response = {'message': str(e)}
+
+            except ValueError:
+                self.set_status(400) # Bad Request
+                message = 'Invalid notebook argument. '
+                message += 'You must supply the notebook ID, not the notebook name.'
+                response = {'message': message}
 
         self.write(response)
 
