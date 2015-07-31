@@ -11,8 +11,8 @@ SERVER_PORT = 8888
 
 USERNAME_OPT = r'?(?P<username>[a-zA-Z0-9_-]+)?'
 USERNAME_REQ = r'(?P<username>[a-zA-Z0-9_-]+)'
-NOTEBOOK_OPT = r'?(?P<notebook>[a-zA-Z0-9_-]+)?'
-NOTEBOOK_REQ = r'(?P<notebook>[a-zA-Z0-9_-]+)'
+NOTEBOOK_OPT = r'?(?P<notebook>[a-zA-Z0-9%_-]+)?'
+NOTEBOOK_REQ = r'(?P<notebook>[a-zA-Z0-9%_-]+)'
 NOTE_OPT     = r'?(?P<note>[a-zA-Z0-9_-]+)?'
 NOTE_REQ     = r'(?P<note>[a-zA-Z0-9_-]+)'
 API_KEY_REQ  = r'(?P<api_key>[A-Z0-9]+)'
