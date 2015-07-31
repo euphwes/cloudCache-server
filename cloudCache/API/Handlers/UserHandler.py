@@ -73,6 +73,7 @@ class UserHandler(AuthorizeHandler):
 
         # Get all users
         else:
-            response = {'users' : [user.username for user in db.query(User).all()]}
+            users = [{'id': user.id, 'username': user.username} for user in db.query(User).all()]
+            response = {'users' : users}
 
         self.write(response)
