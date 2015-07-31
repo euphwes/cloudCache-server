@@ -32,10 +32,9 @@ class NoteHandler(AuthorizeHandler):
                 int(notebook_id)
 
                 notebook = get_notebook(notebook_id, self.current_user)
-                response = {
-                    'notebook': notebook.name,
-                    'notes'   : [note.to_ordered_dict() for note in notebook.notes]
-                }
+                name     = notebook.name
+                notes    = [note.to_ordered_dict() for note in notebook.notes]
+                response = { 'notebook': name, 'notes': notes}
 
             except NotebookDoesntExistError as e:
                 self.set_status(404) # Not Found
