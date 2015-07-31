@@ -4,7 +4,7 @@ from tornado.escape import json_decode
 
 from . import AuthorizeHandler
 
-from cloudCache.Business.Models import User, Notebook, DB_SESSION as db
+from cloudCache.Business.Models import User, Notebook, Note, DB_SESSION as db
 from cloudCache.Business.Models.Note import create_note
 from cloudCache.Business.Models.Notebook import get_notebook
 from cloudCache.Business.Errors import NoteAlreadyExistsError, NotebookDoesntExistError
@@ -15,6 +15,28 @@ from cloudCache.Business.Errors import NoteAlreadyExistsError, NotebookDoesntExi
 
 class NoteHandler(AuthorizeHandler):
     """ The request handler for managing cloudCache notes. """
+
+
+    def get(self, **kwargs):
+        """ Implements the HTTP GET call on /notebooks/{notebook}/notes/{note}. """
+
+        self.authorize()
+
+        notebook_name = kwargs.get('notebook')
+        note_name = kwargs.get('note')
+
+        if not note_name:
+            # get all notes for this notebook
+            try:
+                notebook = get_notebook(notebook_name, self.current_user)
+                notes = db.query(Note).filter_by(notebook=notebook).all()
+                response = {'notes': [note.to_ordered_dict() for note in notes]}
+
+            except NotebookDoesntExistError as e:
+                self.set_status(404) # Not Found
+                response = {'message': str(e)}
+
+        self.write(response)
 
 
     def post(self, **kwargs):
