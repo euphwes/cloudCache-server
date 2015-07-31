@@ -100,15 +100,15 @@ def create_notebook(name, user):
     return new_notebook
 
 
-def get_notebook(name, user):
+def get_notebook(notebook_id, user):
     """ Retrieve a Notebook for a given user.
 
     Args:
-        name (string): The new notebook's name.
-        user (cloudCache.Business.Models.User): The new notebook's user.
+        id (int): The notebook's id.
+        user (cloudCache.Business.Models.User): The notebook's user.
 
     Returns:
-        cloudCache.Business.Models.Notebook: The newly-created Notebook.
+        cloudCache.Business.Models.Notebook: The Notebook.
 
     Raises:
         cloudCache.Business.Errors.NotebookDoesntExistError: If a notebook with the given name
@@ -116,9 +116,9 @@ def get_notebook(name, user):
 
     """
 
-    notebook = db.query(Notebook).filter_by(name=name, user=user).first()
+    notebook = db.query(Notebook).filter_by(id=notebook_id, user=user).first()
     if not notebook:
-        message = "{} doesn't have a notebook with the name '{}'.".format(user.username, name)
+        message = "{} doesn't have a notebook with ID '{}'.".format(user.username, notebook_id)
         raise NotebookDoesntExistError(message)
 
     return notebook

@@ -22,15 +22,18 @@ class NoteHandler(AuthorizeHandler):
 
         self.authorize()
 
-        notebook_name = kwargs.get('notebook')
-        note_name = kwargs.get('note')
+        notebook_id = kwargs.get('notebook')
+        note_id     = kwargs.get('note')
 
-        if not note_name:
+        if not note_id    :
             # get all notes for this notebook
             try:
-                notebook = get_notebook(notebook_name, self.current_user)
+                notebook = get_notebook(notebook_id, self.current_user)
                 notes = db.query(Note).filter_by(notebook=notebook).all()
-                response = {'notes': [note.to_ordered_dict() for note in notes]}
+                response = {
+                    'notebook': notebook.name,
+                    'notes'   : [note.to_ordered_dict() for note in notes]
+                }
 
             except NotebookDoesntExistError as e:
                 self.set_status(404) # Not Found
