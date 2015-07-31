@@ -32,7 +32,7 @@ class NotebookHandler(AuthorizeHandler):
 
         else:
             notebooks = db.query(Notebook).filter_by(user=self.current_user).all()
-            response  = {'notebooks': [notebook.name for notebook in notebooks]}
+            response  = {'notebooks': [{'id': nb.id, 'name': nb.name} for nb in notebooks]}
 
         self.write(response)
 
