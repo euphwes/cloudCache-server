@@ -11,7 +11,7 @@ from sqlalchemy_utils.types import ArrowType
 
 from . import SQL_ALCHEMY_BASE, JsonMixin, DB_SESSION as db
 from . import User
-from ..Errors import NotebookAlreadyExistsError
+from ..Errors import NotebookAlreadyExistsError, NotebookDoesntExistError
 
 from arrow import now as arrow_now
 
@@ -81,6 +81,10 @@ def create_notebook(name, user):
     Returns:
         cloudCache.Business.Models.Notebook: The newly-created Notebook.
 
+    Raises:
+        cloudCache.Business.Errors.NotebookAlreadyExistsError: If a notebook with the given name
+            already exists for this user.
+
     """
 
     if db.query(Notebook).filter_by(name=name, user=user).first():
@@ -94,3 +98,27 @@ def create_notebook(name, user):
     db.commit()
 
     return new_notebook
+
+
+def get_notebook(name, user):
+    """ Retrieve a Notebook for a given user.
+
+    Args:
+        name (string): The new notebook's name.
+        user (cloudCache.Business.Models.User): The new notebook's user.
+
+    Returns:
+        cloudCache.Business.Models.Notebook: The newly-created Notebook.
+
+    Raises:
+        cloudCache.Business.Errors.NotebookDoesntExistError: If a notebook with the given name
+            doesn't exist for this user.
+
+    """
+
+    notebook = db.query(Notebook).filter_by(name=name, user=user).first()
+    if not notebook:
+        message = "{} doesn't have a notebook with the name '{}'.".format(user.username, name)
+        raise NotebookDoesntExistError(message)
+
+    return notebook
