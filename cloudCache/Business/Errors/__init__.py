@@ -25,7 +25,11 @@ class NotebookAlreadyExistsError(CloudCacheError):
 
 class NotebookDoesntExistError(CloudCacheError):
     """ Raised when attempting to retrieve a Notebook for a specific user, and a Notebook with that
-    name doesnt exists for that user. """
+    ID doesnt exists for that user. """
+
+class NoteDoesntExistError(CloudCacheError):
+    """ Raised when attempting to retrieve a Note for a specific user, and a Note with that
+    ID doesnt exists for that user. """
 
 class NoteAlreadyExistsError(CloudCacheError):
     """ Raised when attempting to create a Note for a specific notebook, and a Note with that key
