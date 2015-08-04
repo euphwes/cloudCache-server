@@ -1,3 +1,6 @@
+# Pycharm .idea
+.idea/
+
 # sqlite databases
 *.db
 
