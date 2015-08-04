@@ -3,7 +3,7 @@
 import tornado.web
 import tornado.ioloop
 
-from cloudCache.API.Handlers import UserHandler, AccessHandler, NotebookHandler, NoteHandler
+from API.Handlers import UserHandler, AccessHandler, NotebookHandler, NoteHandler
 
 # -------------------------------------------------------------------------------------------------
 
