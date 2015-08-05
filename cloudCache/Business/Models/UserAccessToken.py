@@ -5,7 +5,7 @@
 # Disable name-too-short warning on `id` variable
 
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy_utils.types import ArrowType
 
 from . import SQL_ALCHEMY_BASE, JsonMixin, DB_SESSION as db
@@ -36,7 +36,7 @@ class UserAccessToken(JsonMixin, SQL_ALCHEMY_BASE):
     access_token = Column(String(32))
     expires_on   = Column(ArrowType)
 
-    user = relationship(User, cascade='save-update, delete')
+    user = relationship(User, backref=backref('access_tokens', cascade='save-update, delete'))
 
 
     def __repr__(self):

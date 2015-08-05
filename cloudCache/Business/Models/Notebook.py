@@ -36,7 +36,7 @@ class Notebook(JsonMixin, SQL_ALCHEMY_BASE):
     name       = Column(String(255))
     created_on = Column(ArrowType, default=arrow_now)
 
-    user = relationship(User, backref=backref('notebooks'), cascade='save-update, delete')
+    user = relationship(User, backref=backref('notebooks', cascade='save-update, delete'))
 
 
     def __repr__(self):

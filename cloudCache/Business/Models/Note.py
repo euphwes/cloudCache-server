@@ -38,7 +38,7 @@ class Note(JsonMixin, SQL_ALCHEMY_BASE):
     created_on   = Column(ArrowType, default=arrow_now)
     last_updated = Column(ArrowType, default=arrow_now, onupdate=arrow_now)
 
-    notebook = relationship(Notebook, backref=backref('notes'), cascade='save-update, delete')
+    notebook = relationship(Notebook, backref=backref('notes', cascade='save-update, delete'))
 
 
     def __repr__(self):
@@ -121,3 +121,29 @@ def get_note(note_id, user):
         raise NoteDoesntExistError(message)
 
     return note
+
+
+def delete_note(note_id, user):
+    """ Delete a Note for a given user.
+
+    Args:
+        note_id (string): The note's id.
+        user (cloudCache.Business.Models.User): The note's user.
+
+    Raises:
+        cloudCache.Business.Errors.NoteDoesntExistError: If a note with the given ID doesn't exist for this user.
+
+    """
+
+    note = db.query(Note).filter_by(id=note_id).first()
+
+    if not note:
+        message = "Note with ID '{}' doesn't exist.".format(note_id)
+        raise NoteDoesntExistError(message)
+
+    if note.notebook.user != user:
+        message = "The note with ID '{}' doesn't belong to you ({}).".format(note_id, user.username)
+        raise NoteDoesntExistError(message)
+
+    db.delete(note)
+    db.commit()
