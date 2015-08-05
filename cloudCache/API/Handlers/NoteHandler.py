@@ -48,7 +48,7 @@ class NoteHandler(AuthorizeHandler):
         try:
             # will raise ValueError if the note_id isn't parseable as an int
             int(note_id)
-            note = delete_note(note_id, self.current_user)
+            delete_note(note_id, self.current_user)
             response = {'message': 'Success'}
 
         except NoteDoesntExistError as error:

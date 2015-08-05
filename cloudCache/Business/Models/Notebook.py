@@ -122,3 +122,29 @@ def get_notebook(notebook_id, user):
         raise NotebookDoesntExistError(message)
 
     return notebook
+
+
+def delete_notebook(notebook_id, user):
+    """ Delete a Notebook for a given user.
+
+    Args:
+        notebook_id (string): The notebook's id.
+        user (cloudCache.Business.Models.User): The note's user.
+
+    Raises:
+        cloudCache.Business.Errors.NotebookDoesntExistError: If a notebook with the given ID doesn't exist for this user.
+
+    """
+
+    notebook = db.query(Notebook).filter_by(id=notebook_id).first()
+
+    if not notebook:
+        message = "Notebook with ID '{}' doesn't exist.".format(notebook_id)
+        raise NotebookDoesntExistError(message)
+
+    if notebook.user != user:
+        message = "The notebook with ID '{}' doesn't belong to you ({}).".format(notebook_id, user.username)
+        raise NotebookDoesntExistError(message)
+
+    db.delete(notebook)
+    db.commit()
