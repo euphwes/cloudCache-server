@@ -36,7 +36,7 @@ class UserAccessToken(JsonMixin, SQL_ALCHEMY_BASE):
     access_token = Column(String(32))
     expires_on   = Column(ArrowType)
 
-    user = relationship(User)
+    user = relationship(User, cascade='save-update, delete')
 
 
     def __repr__(self):

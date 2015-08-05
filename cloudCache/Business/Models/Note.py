@@ -38,7 +38,7 @@ class Note(JsonMixin, SQL_ALCHEMY_BASE):
     created_on   = Column(ArrowType, default=arrow_now)
     last_updated = Column(ArrowType, default=arrow_now, onupdate=arrow_now)
 
-    notebook = relationship(Notebook, backref=backref('notes'))
+    notebook = relationship(Notebook, backref=backref('notes'), cascade='save-update, delete')
 
 
     def __repr__(self):
