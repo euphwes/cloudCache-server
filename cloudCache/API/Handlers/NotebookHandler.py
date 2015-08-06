@@ -57,8 +57,6 @@ class NotebookHandler(AuthorizeHandler):
             self.set_status(400) # Bad Request
             response = {'message': 'Invalid notebook argument. You must supply the notebook ID.'}
 
-
-
         self.write(response)
 
 

@@ -109,3 +109,15 @@ def create_user(username, first_name, last_name, email_address, password):
     db.commit()
 
     return new_user
+
+
+def delete_user(user):
+    """ Delete a user.
+
+    Args:
+        user (cloudCache.Business.Models.User): The user.
+
+    """
+
+    db.delete(user)
+    db.commit()

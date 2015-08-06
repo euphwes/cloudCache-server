@@ -5,7 +5,7 @@ from tornado.escape import json_decode
 from . import AuthorizeHandler
 
 from cloudCache.Business.Models import User, DB_SESSION as db
-from cloudCache.Business.Models.User import create_user
+from cloudCache.Business.Models.User import create_user, delete_user
 from cloudCache.Business.Errors import UserAlreadyExistsError, UserDoesntExistError
 
 # -------------------------------------------------------------------------------------------------
@@ -52,6 +52,31 @@ class UserHandler(AuthorizeHandler):
             self.set_status(400) # Bad Request
             message = 'Invalid POST body. Must include username, first and last names, email, and password.'
             response = {'message': message}
+
+        self.write(response)
+
+
+    def delete(self, username):
+        """ Implements the HTTP DELETE call on /users/{username}. """
+
+        self.authorize()
+
+        try:
+            password = json_decode(self.request.body)['password']
+            user = db.query(User).filter_by(username=username).first()
+
+            if (not user) or (user.password != password):
+                self.set_status(401) # Unauthenticated
+                response = {'message': 'Invalid username/password combination.'}
+
+            else:
+                delete_user(user)
+                response = {'message': 'Success'}
+
+        except ValueError:
+            # raised by the json_decode part if no http body is passed in, and therefore no password passed in
+            self.set_status(400) # Bad Request
+            response = {'message': 'You must provide a user password for this operation.'}
 
         self.write(response)
 
