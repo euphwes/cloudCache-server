@@ -66,17 +66,22 @@ class UserHandler(AuthorizeHandler):
 
         # looking for a specific user
         if username:
-            password = json_decode(self.request.body)['password']
-            user = db.query(User).filter_by(username=username).first()
+            try:
+                password = json_decode(self.request.body)['password']
+                user = db.query(User).filter_by(username=username).first()
 
-            if user.password != password:
-                self.set_status(401) # Unauthenticated
-                response = {'message': 'Invalid username/password combination.'}
-            elif user:
-                response = {'user': user.to_ordered_dict()}
-            else:
-                self.set_status(404) # Not Found
-                response = {'message': 'The user "{}" does not exist.'.format(username)}
+                if (not user) or (user.password != password):
+                    self.set_status(401) # Unauthenticated
+                    response = {'message': 'Invalid username/password combination.'}
+
+                else:
+                    response = {'user': user.to_ordered_dict()}
+
+
+            except ValueError:
+                # raised by the json_decode part if no http body is passed in, and therefore no password passed in
+                self.set_status(400) # Bad Request
+                response = {'message': 'You must provide a user password for this operation.'}
 
         # Get all users
         else:
