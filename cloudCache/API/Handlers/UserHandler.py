@@ -23,7 +23,8 @@ class UserHandler(AuthorizeHandler):
             "username"  : "jswanson",
             "first_name": "Joe",
             "last_name" : "Swanson",
-            "email"     : "jswanson@gmail.com"
+            "email"     : "jswanson@gmail.com",
+            "password"  : "password"
         }
 
         Returns the user ID and API key if successful, or an error message otherwise. """
@@ -35,7 +36,8 @@ class UserHandler(AuthorizeHandler):
             first_name = info['first_name']
             last_name  = info['last_name']
             email      = info['email']
-            user = create_user(username, first_name, last_name, email)
+            password   = info['password']
+            user = create_user(username, first_name, last_name, email, password)
 
             response = {
                 'user_id': user.id,
@@ -48,7 +50,7 @@ class UserHandler(AuthorizeHandler):
 
         except KeyError:
             self.set_status(400) # Bad Request
-            message = 'Invalid POST body. Must include username, first and last names, and email.'
+            message = 'Invalid POST body. Must include username, first and last names, email, and password.'
             response = {'message': message}
 
         self.write(response)
@@ -64,8 +66,13 @@ class UserHandler(AuthorizeHandler):
 
         # looking for a specific user
         if username:
+            password = json_decode(self.request.body)['password']
             user = db.query(User).filter_by(username=username).first()
-            if user:
+
+            if user.password != password:
+                self.set_status(401) # Unauthenticated
+                response = {'message': 'Invalid username/password combination.'}
+            elif user:
                 response = {'user': user.to_ordered_dict()}
             else:
                 self.set_status(404) # Not Found

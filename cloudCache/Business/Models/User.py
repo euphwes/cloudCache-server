@@ -6,7 +6,7 @@
 # User DOES have attribute "notebooks", it's created as a backref in Notebook model
 
 from sqlalchemy import Column, Integer, String
-from sqlalchemy_utils.types import ArrowType
+from sqlalchemy_utils.types import ArrowType, PasswordType
 
 from . import SQL_ALCHEMY_BASE, JsonMixin, DB_SESSION as db
 from ..Errors import UserAlreadyExistsError
@@ -40,6 +40,7 @@ class User(JsonMixin, SQL_ALCHEMY_BASE):
     email_address = Column(String(255))
     api_key       = Column(String(32))
     date_joined   = Column(ArrowType, default=arrow_now)
+    password      = Column(PasswordType(schemes=['pbkdf2_sha512']))
 
 
     def __repr__(self):
@@ -73,7 +74,7 @@ def _get_attributes():
 
 # -------------------------------------------------------------------------------------------------
 
-def create_user(username, first_name, last_name, email_address):
+def create_user(username, first_name, last_name, email_address, password):
     """ Creates a User entry in the database, and returns the user object to the caller.
 
     Args:
@@ -81,6 +82,7 @@ def create_user(username, first_name, last_name, email_address):
         first_name (string): The new user's first name.
         last_name (string): The new user's last name.
         email_address (string): The new user's email address.
+        password (string): The new user's password.
 
     Returns:
         cloudCache.Business.Models.User: The newly-created User.
@@ -100,7 +102,8 @@ def create_user(username, first_name, last_name, email_address):
                     first_name=first_name,
                     last_name=last_name,
                     email_address=email_address,
-                    api_key=api_key)
+                    api_key=api_key,
+                    password=password)
 
     db.add(new_user)
     db.commit()
